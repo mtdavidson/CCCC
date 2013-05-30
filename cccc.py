@@ -9,7 +9,7 @@ conn = sqlite3.connect('cards.sqlite')
 c = conn.cursor()
 
 while True:
-    card_number = raw_input("Card ID: ")
+    card_number = raw_input("Please Enter a Card Number: ")
     card_number = card_number.upper();
     card_number = card_number.replace ("-", "_");
 
@@ -17,6 +17,17 @@ while True:
         continue;
     elif card_number == "QUIT":
         break;
+
+    qty = 1;
+    qty_input = raw_input ("Please Enter a QTY: %s"%qty + chr(8)*1)
+    if not qty_input:
+        qty_input = qty;
+
+    if not str(qty_input).isdigit():
+        print "QTY not valid"
+        continue;
+
+    qty = int (qty_input);
 
     url = 'http://www.koolkingdom.co.uk/acatalog/info_' + card_number + '.html';
     try:
@@ -42,14 +53,15 @@ while True:
     r = regex.search(str (price))
     price = r.groups ()[0];
 
-    print card_number + " " + card_name + " " + price;
+    #TODO: Use string formatting
+    print card_number + " " + card_name + " " + " " + str(qty) + " " + str(float (price) * qty) + "[" + price + "]";
 
     try:
-        c.execute ("INSERT INTO cards VALUES (?, ?, ?, ?)", (card_number, card_name, 1, price))
+        c.execute ("INSERT INTO cards VALUES (?, ?, ?, ?)", (card_number, card_name, qty, price))
         print "Added"
     except sqlite3.IntegrityError as e:
         print "Duplicate"
-        c.execute ("UPDATE cards SET qty = qty + 1, price = ? WHERE card_number = ?", (price, card_number));
+        c.execute ("UPDATE cards SET qty = qty + ?, price = ? WHERE card_number = ?", (qty, price, card_number));
         print "QTY Incremented and price updated"
 
     conn.commit ()
