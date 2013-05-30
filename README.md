@@ -12,3 +12,19 @@ Running
 4. Repeat
 5. Enter `quit` to exit
 
+Future
+------
+
+* Hook into chaos cards prices as well
+* Cleaner Inteface
+* Delete cards / decrement qty 
+* Update all prices
+* GUI Interface (C++ (Qt,Boost,UnitTestPlusPlus))
+* Web Interface (PHP (Zend))
+* Multiple users single database (postgres?)
+* Stats
+* Auto complete card numbers 
+* Search by card name ( In case card number not working )
+* Search friends cards
+* Trade with other users
+* Historic card pricing 
