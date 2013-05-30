@@ -17,10 +17,18 @@ Future
 
 * Hook into chaos cards prices as well
 * Cleaner Inteface
+    * Help command
+    * Add mode
+    * Delete mode
+    * Stats mode    
 * Delete cards / decrement qty 
 * Update all prices
 * GUI Interface (C++ (Qt,Boost,UnitTestPlusPlus))
 * Web Interface (PHP (Zend))
+    * REST API
+    * Authentication
+* Compose email to KK selling selected cards
+* Export card list
 * Multiple users single database (postgres?)
 * Stats
 * Auto complete card numbers 
