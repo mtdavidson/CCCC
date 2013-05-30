@@ -8,38 +8,50 @@ from BeautifulSoup import BeautifulSoup
 conn = sqlite3.connect('cards.sqlite')
 c = conn.cursor()
 
-if (len(sys.argv) != 2):
-    quit ('Please provide card id')
+while True:
+    card_number = raw_input("Card ID: ")
+    card_number = card_number.upper();
+    card_number = card_number.replace ("-", "_");
 
-card_number = str (sys.argv [1]);
+    if (card_number == ""):
+        continue;
+    elif card_number == "QUIT":
+        break;
 
-#TODO: Check ID Valid Format
-page = urllib2.urlopen('http://www.koolkingdom.co.uk/acatalog/info_' + card_number + '.html').read();
-#TODO: Check not 404
-#TOOD: Try again replace _ with -
-#TODO: Try again add _1 to card_number
-#TODO: Report Error
-soup = BeautifulSoup(page)
-soup.prettify()
+    url = 'http://www.koolkingdom.co.uk/acatalog/info_' + card_number + '.html';
+    try:
+        try:
+            #Attempt to get page with standard URL
+            page = urllib2.urlopen(url).read();
+        except urllib2.HTTPError:
+            #On failure attempt alternative
+            page = urllib2.urlopen(url.replace ("_", "-")).read()
+    except urllib2.HTTPError:
+        print card_number + " could not be found"
+        continue;
 
-#TODO: Clean price
-card_name = soup.title.string
+    soup = BeautifulSoup(page)
+    soup.prettify()
 
-price = soup.find('actinic:prices').span
-print price;
-regex = re.compile(".*\xa3([0-9]+\.[0-9]+).*")
-r = regex.search(str (price))
-price = r.groups ()[0];
+    #TODO: Clean price
+    card_name = soup.title.string
 
-print card_number + " " + card_name + " " + price;
+    price = soup.find('actinic:prices').span
+    print price;
+    regex = re.compile(".*\xa3([0-9]+\.[0-9]+).*")
+    r = regex.search(str (price))
+    price = r.groups ()[0];
 
-try:
-    c.execute ("INSERT INTO cards VALUES (?, ?, ?, ?)", (card_number, card_name, 1, price))
-    print "Added"
-except sqlite3.IntegrityError as e:
-    print "Duplicate"
-    c.execute ("UPDATE cards SET qty = qty + 1, price = ? WHERE card_number = ?", (price, card_number));
-    print "QTY Incremented and price updated"
-conn.commit ()
+    print card_number + " " + card_name + " " + price;
+
+    try:
+        c.execute ("INSERT INTO cards VALUES (?, ?, ?, ?)", (card_number, card_name, 1, price))
+        print "Added"
+    except sqlite3.IntegrityError as e:
+        print "Duplicate"
+        c.execute ("UPDATE cards SET qty = qty + 1, price = ? WHERE card_number = ?", (price, card_number));
+        print "QTY Incremented and price updated"
+
+    conn.commit ()
 
 c.close ();
