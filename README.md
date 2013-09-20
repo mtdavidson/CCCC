@@ -3,6 +3,11 @@ cardCatalogCardCost
 
 Initial README File
 
+Requirements
+------------
+
+BeautifulSoup
+
 Running
 -------
 
